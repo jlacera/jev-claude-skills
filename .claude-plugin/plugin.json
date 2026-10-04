@@ -1,8 +1,14 @@
 {
-  "name": "jev-skills",
+  "name": "jev-claude-skills",
   "version": "1.1.0",
-  "description": "Multi-level skills for Jev, TypeSafe AI's decision model: core (API, question design, thresholds, Node/Python clients, batch engine, mock, n8n), growth (SEO internal linking, prospecting, outreach checks, ICP lists) and ops (bookkeeping review, claim verification, triage, agent cost cutting). Unofficial; not affiliated with TypeSafe AI.",
-  "author": { "name": "Jesús Lacera — SEO-Invoke", "url": "https://seo-invoke.com" },
+  "description": "Three lazy-loaded skills for Jev, TypeSafe AI's System One decision model: a core skill (when Jev beats an LLM, Vercel AI Gateway access, question design, gap-rule and confidence thresholds, cost math, known weak spots, zero-dependency Node and Python clients, a batch engine, a local mock and an n8n template), growth recipes (SEO internal linking, near-duplicate detection, buyer-intent prospecting, outreach message checks, ICP lists that judge before paying to enrich) and ops recipes (read-only bookkeeping review, claim and citation verification, confidence-gated triage, replacing decision-only LLM calls in agents). Unofficial; not affiliated with TypeSafe AI.",
+  "author": {
+    "name": "jlacera",
+    "url": "https://github.com/jlacera"
+  },
+  "homepage": "https://github.com/jlacera/jev-claude-skills",
+  "repository": "https://github.com/jlacera/jev-claude-skills",
   "license": "MIT",
-  "keywords": ["jev", "typesafe", "system-one", "seo", "internal-linking", "lead-scoring", "classification", "n8n"]
+  "keywords": ["jev", "typesafe", "system-one", "seo", "internal-linking", "lead-scoring", "prospecting", "classification", "triage", "n8n", "ai-agents", "cost-optimization"],
+  "skills": "./skills/"
 }

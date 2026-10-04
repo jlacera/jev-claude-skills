@@ -1,7 +1,17 @@
 {
-  "name": "jev-skills",
-  "owner": { "name": "Jesús Lacera — SEO-Invoke" },
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "jev-claude-skills",
+  "description": "Unofficial Claude skills for Jev, TypeSafe AI's decision model: cheap, calibrated yes/no, choice and score decisions for SEO, growth and operations.",
+  "owner": {
+    "name": "jlacera",
+    "url": "https://github.com/jlacera"
+  },
   "plugins": [
-    { "name": "jev-skills", "source": "./", "description": "Multi-level skills for Jev (TypeSafe AI): core, growth and ops. Unofficial." }
+    {
+      "name": "jev-claude-skills",
+      "description": "Three lazy-loaded skills: jev-core (API, question design, thresholds, cost, weak spots, Node/Python clients, batch engine, mock, n8n), jev-growth (SEO internal linking, buyer-intent prospecting, outreach checks, ICP lists) and jev-ops (bookkeeping review, claim verification, triage, agent cost cutting).",
+      "source": "./",
+      "category": "productivity"
+    }
   ]
 }

@@ -1,4 +1,4 @@
-# jev-skills
+# jev-claude-skills
 
 **Claude skills for [Jev](https://typesafe.ai), TypeSafe AI's System One decision model — built for SEO, growth and
 automation work.**
@@ -26,7 +26,7 @@ Skills load on demand: `jev-core` triggers on any Jev / bulk-classification task
 
 ```bash
 /plugin marketplace add jlacera/jev-claude-skills
-/plugin install jev-skills@jev-skills
+/plugin install jev-claude-skills@jev-claude-skills
 ```
 
 **Claude Code (manual, all projects):** copy each folder in `skills/` to `~/.claude/skills/`.
