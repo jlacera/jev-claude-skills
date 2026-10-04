@@ -1,0 +1,166 @@
+{
+  "name": "Jev · Inbound lead triage",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "a1",
+      "name": "Manual start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "s1",
+              "name": "channel",
+              "value": "web form",
+              "type": "string"
+            },
+            {
+              "id": "s2",
+              "name": "message",
+              "value": "Hi, we need a quote for local SEO for our dental clinic as soon as possible.",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a2",
+      "name": "Sample lead",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://ai-gateway.vercel.sh/v1/evaluate",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'typesafe-ai/jev', state: { channel: $json.channel, message: $json.message }, questions: { intent: { type: 'choice', instructions: 'What is the main request in `message`?', criteria: { quote_seo: 'Wants a quote for SEO, local SEO, AEO/GEO or search visibility', quote_web: 'Wants a new website, a redesign or web development', automation: 'Wants automation, AI agents, n8n workflows or integrations', existing_client: 'Existing client asking about an ongoing project, invoice or support', other: 'Anything that does not fit the options above' } }, vendor: { type: 'boolean', instructions: 'The sender is promoting or selling their own services (link building, guest posts, outsourcing).' } }, providerOptions: { gateway: { zeroDataRetention: true } } }) }}",
+        "options": {
+          "timeout": 30000
+        }
+      },
+      "id": "a3",
+      "name": "Jev · evaluate",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "notes": "Header Auth credential: Name = Authorization, Value = Bearer <AI_GATEWAY_API_KEY>. Use a key with a spend cap."
+    },
+    {
+      "parameters": {
+        "jsCode": "// Reads Jev's answer and picks a lane. Thresholds live in code (tunable), not in the prompt.\nconst out = [];\nfor (const item of $input.all()) {\n  const a = item.json.answers || {};\n  const probs = Object.values(a.intent?.probabilities || {});\n  const n = probs.length || 1;\n  const pmax = probs.length ? Math.max(...probs) : 0;\n  const confidence = n > 1 ? Math.max(0, (pmax - 1 / n) / (1 - 1 / n)) : 0; // official Choice formula\n  const vendor = a.vendor?.probability ?? a.vendor?.noul;\n  let lane = confidence >= 0.85 ? 'auto' : confidence >= 0.6 ? 'review' : 'human';\n  if (!a.intent?.choice || typeof vendor !== 'number') lane = 'human';   // missing answer: never automate\n  else if (a.intent.choice === 'existing_client') lane = 'human';\n  else if (vendor >= 0.8) lane = 'archive';\n  out.push({ json: { intent: a.intent?.choice, confidence: Number(confidence.toFixed(2)), vendor, lane,\n    cost_usd: item.json.providerMetadata?.gateway?.cost } });\n}\nreturn out;"
+      },
+      "id": "a4",
+      "name": "Decide lane",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        660,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.lane }}",
+              "rightValue": "auto",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a5",
+      "name": "Auto lane?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        880,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Manual start": {
+      "main": [
+        [
+          {
+            "node": "Sample lead",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sample lead": {
+      "main": [
+        [
+          {
+            "node": "Jev · evaluate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Jev · evaluate": {
+      "main": [
+        [
+          {
+            "node": "Decide lane",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decide lane": {
+      "main": [
+        [
+          {
+            "node": "Auto lane?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

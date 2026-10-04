@@ -1,0 +1,11 @@
+.env
+.env.*
+!.env.example
+node_modules/
+__pycache__/
+*.out.csv
+/link-map.csv
+/leads.csv
+/message-review.csv
+*.possible-duplicates.txt
+.DS_Store

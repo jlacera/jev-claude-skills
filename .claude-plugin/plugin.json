@@ -1,0 +1,8 @@
+{
+  "name": "jev-skills",
+  "version": "1.1.0",
+  "description": "Multi-level skills for Jev, TypeSafe AI's decision model: core (API, question design, thresholds, Node/Python clients, batch engine, mock, n8n), growth (SEO internal linking, prospecting, outreach checks, ICP lists) and ops (bookkeeping review, claim verification, triage, agent cost cutting). Unofficial; not affiliated with TypeSafe AI.",
+  "author": { "name": "Jesús Lacera — SEO-Invoke", "url": "https://seo-invoke.com" },
+  "license": "MIT",
+  "keywords": ["jev", "typesafe", "system-one", "seo", "internal-linking", "lead-scoring", "classification", "n8n"]
+}

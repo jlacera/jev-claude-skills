@@ -1,0 +1,7 @@
+{
+  "name": "jev-skills",
+  "owner": { "name": "Jesús Lacera — SEO-Invoke" },
+  "plugins": [
+    { "name": "jev-skills", "source": "./", "description": "Multi-level skills for Jev (TypeSafe AI): core, growth and ops. Unofficial." }
+  ]
+}
