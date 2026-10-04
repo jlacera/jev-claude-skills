@@ -16,7 +16,7 @@ $B $S/jev-ops/scripts/configs/claim-check.mjs $F/claims.jsonl --all --out $O/cl.
 $B $S/jev-ops/scripts/configs/lead-inbound-triage.mjs $F/leads.csv --out $O/tr.csv
 node $S/jev-growth/scripts/find-buyers.mjs --product "a CRM for a small sales team" --file $F/posts.csv --out $O/buyers.csv
 node $S/jev-growth/scripts/check-messages.mjs $F/outreach.json --out $O/msg.csv
-node $S/jev-growth/scripts/internal-links.mjs --sitemap http://localhost:8799/sitemap.xml --dest $F/destinations.json --anchors --floor 0.3 --gap 0.05 --out $O/links.csv
+node $S/jev-growth/scripts/internal-links.mjs --sitemap http://localhost:8799/sitemap.xml --dest $F/destinations.json --anchors --floor 0.3 --gap 0.05 --exclude "blog-c" --out $O/links.csv
 (cd $S/jev-core/scripts && python3 -c "
 from jev_client import Jev, boolean, choice
 j=Jev(); r=j.evaluate('refrigerated logistics', {'a': boolean('refrigerated logistics'), 'c': choice('sector', {'log':'logistics refrigerated','wine':'winery'})})

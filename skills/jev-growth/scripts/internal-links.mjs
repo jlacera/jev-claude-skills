@@ -4,7 +4,7 @@
 //
 //   node --env-file=.env internal-links.mjs --sitemap https://client.com/sitemap.xml --dest destinations.json
 //        [--limit 20 | --all] [--floor 0.60] [--gap 0.15] [--max-per-dest 30] [--lang en|es]
-//        [--anchors] [--concurrency 3] [--out link-map.csv]
+//        [--anchors] [--concurrency 3] [--out link-map.csv] [--include REGEX] [--exclude REGEX]
 //
 // destinations.json: [{ "url": "https://client.com/service-x", "title": "Service X in <city>",
 //                       "keywords": ["service x", "x in <city>"] }, ...]   (keywords optional, used for anchors)
@@ -37,6 +37,8 @@ const LIMIT = opt.all ? Infinity : numOpt('limit', 20);
 const CONCURRENCY = Math.max(1, numOpt('concurrency', 3));
 const OUT = opt.out ?? 'link-map.csv';
 const LANG = opt.lang ?? 'en';
+const INCLUDE = opt.include ? new RegExp(opt.include, 'i') : null; // e.g. only one language: --exclude '/en/'
+const EXCLUDE = opt.exclude ? new RegExp(opt.exclude, 'i') : null; // e.g. legal pages: --exclude 'privacy|legal|contact'
 
 // The English wording is the validated one (it ranked correctly in the test). Other languages: A/B it first.
 const QUESTION = {
@@ -72,8 +74,9 @@ async function loadPage(url) {
 }
 
 // ---- 1. Crawl ----
-const host = new URL(opt.sitemap).host;
-const all = (await sitemapUrls(opt.sitemap)).filter((u) => { try { return new URL(u).host === host; } catch { return false; } });
+const bareHost = (u) => new URL(u).host.replace(/^www\./, ''); // www and apex count as the same site
+const host = bareHost(opt.sitemap);
+const all = (await sitemapUrls(opt.sitemap)).filter((u) => { try { return bareHost(u) === host && (!INCLUDE || INCLUDE.test(u)) && (!EXCLUDE || !EXCLUDE.test(u)); } catch { return false; } });
 const sources = [...new Set(all)].slice(0, LIMIT);
 console.error(`Sitemap: ${all.length} URLs · processing ${sources.length} · destinations: ${DESTINATIONS.length}`);
 const pages = (await h.pool(sources, 4, loadPage)).filter((p) => p && !p.__error && p.body.length > 200);
